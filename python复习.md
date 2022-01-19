@@ -74,7 +74,7 @@ y if x else z
 
 ------
 
-### 列表
+### 列表（list）
 
 （数组）
 
@@ -189,7 +189,7 @@ member[:]
 
 ------
 
-### 元组
+### 元组（tuple）
 
 （带上枷锁的列表）
 
@@ -241,7 +241,7 @@ in，not in：成员操作符
 
 ------
 
-### 字符串
+### 字符串（str）
 
 字符串不能随意修改，修改方法和元组一样
 
@@ -366,13 +366,13 @@ list(iterable)# 有参
 
 倒序，返回一个迭代器对象
 
-如果要把他转化为一个列表，使用`list(reversed(number))转化
+如果要把他转化为一个列表，使用`list(reversed(number))`转化
 
 
 
 ##### enumerate()
 
-枚举。(**index**,元素)的列表
+枚举。产生一个(**index**,元素)的列表
 
 ![](https://s4.ax1x.com/2022/01/18/70BrLR.png)
 
@@ -380,7 +380,7 @@ list(iterable)# 有参
 
 ##### zip()
 
-- 返回一个迭代器对象，需要转化为列表
+- 对象是两个列表，实现下标一致的元素合并，返回一个迭代器对象，需要转化为列表
 
 ![](https://s4.ax1x.com/2022/01/18/70BIOA.png)
 
@@ -390,15 +390,344 @@ list(iterable)# 有参
 
 ### 函数
 
+#### 创建一个函数
+
+语法：`def 函数名 ():`
+
+函数调用：` 函数名 ()`     (函数定义需要在函数调用之前)
+
+函数参数：由参数变量可以实现函数可变
+
+```python
+比如定义一个加法函数
+def add (num1,num2):
+    result=num1+num2
+    print(result)
+```
+
+函数的返回值：需要关键字：return
+
+```python
+def add (num1,num2)：
+    return (num1+num2)
+print(add(1,2))
+>>>3
+```
+
+#### 形参和实参
+
+和c，c++一样：
+
+![](https://s4.ax1x.com/2022/01/19/7DK8yD.png)
+
+#### 函数文档
+
+- 类似注释
+
+```python
+def add (num1,num2)：
+    '这是一个实现加法的函数'
+    return (num1+num2)
+#正常打印的时候不会显示
+#调用函数文档
+add._doc_
+help(add)
+#或者
+print._doc_
+help(print)
+```
+
+#### 关键字参数
+
+```python
+def saysome(name,words):
+    print(name+'->'+words)
+    
+#一种
+saysome('ashelly','上课')
+#第二种
+saysome('上课'，'ashelly')
+#第二种出现错误
+#改正
+saysome(words='上课',name='ashelly')
+```
+
+#### 默认参数
+
+```python
+# 定义的时候给默认值
+def saysome(name='ashelly',words)
+```
+
+#### 收集参数
+
+```python
+def saysome(*params):
+#加上* ，参数长度可变
+
+def saysome(*params,exp=8)
+# exp=8表示，变量exp固定大小为8
+```
+
+![](https://s4.ax1x.com/2022/01/19/7DM2uD.png)
+
+参数用元组打包起来，用逗号隔开；上面示例中的params就是一个长度不定的元组
+
+------
+
+### 函数与过程
+
+- 函数（function）：有返回值
+- 过程（procrdure）：简单，特殊，没有返回值
+
+python中没有过程，因为即使函数未定义return语句，也会返回'none',或者'type'
+
+![](https://s4.ax1x.com/2022/01/19/7DlMYn.png)
+
+#### 再谈返回值
+
+c++，c中都是会确定返回值类型
+
+而python是**动态确定   返回值类型，返回值数量**
+
+python可以通过列表，或者元组打包返回值：
+
+![](https://s4.ax1x.com/2022/01/19/7DldYR.png)
+
+#### 函数变量的作用域问题
+
+和c，c++的情况一样：
+
+局部变量：（local variable）
+
+全局变量：（global variable）
+
+- 如果试图在函数内修改全局变量，python机制会创建一个新的变量，和该全局变量同名，来托放这个新赋的值。而全局变量的值并不会被改变
+
+![](https://s4.ax1x.com/2022/01/19/7D3iKf.png)
+
+- 全局变量在整个代码中都可以访问到，但是不要试图在（局部）函数内对全局变量进行修改；但是可以访问全局变量的值
 
 
 
+#### 内嵌函数和闭包
+
+全局变量在函数被修改，python机制会用屏蔽（shadowing)来保护全局变量
+
+**用global关键字修改就可以实现对全局变量的修改**
+
+![](https://s4.ax1x.com/2022/01/19/7D8wfs.png)
+
+![](https://s4.ax1x.com/2022/01/19/7D8r60.png)
+
+**内嵌函数**
+
+在函数定义内部嵌套定义一个函数
+
+- 失效同时打印两个函数
+
+![](https://s4.ax1x.com/2022/01/19/7DGJ3R.png)
+
+![](https://s4.ax1x.com/2022/01/19/7DGtjx.png)
+
+- 成功打印两个函数
+
+![](https://s4.ax1x.com/2022/01/19/7DGaDK.png)
+
+**注意：内嵌函数只能在函数内部内被调用，不能在外部调用**
 
 
 
+**闭包（closure）**
+
+闭包，又称闭包函数或者闭合函数，其实和前面讲的嵌套函数类似。
+
+不同之处在于，闭包中**外部函数返回的不是一个具体的值，而是一个函数**。
+
+一般情况下，返回的函数会赋值给一个变量，这个变量可以在后面被继续执行调用。
+
+![](https://s4.ax1x.com/2022/01/19/7DYKkF.png)
+
+不仅是内嵌函数，返回值也是函数，调用闭包函数的两种方式（以上）。
+
+内嵌函数要返回值，外部函数返回内部函数，就是返回内部函数返回的值
+
+**容易出现的错误**：
+
+![](https://s4.ax1x.com/2022/01/19/7DY51s.png)
+
+内嵌函数，将fun1的内部环境当做外部环境，x对于fun2也是全局变量，因此不能修改全局变量，python机制会把x当作未定义的局部变量
 
 
 
+**改进**
+
+- 因为列表不存在栈中，不会被屏蔽，所以将x定义为列表再在内部函数调用
+
+![](https://s4.ax1x.com/2022/01/19/7DtKDP.png)
+
+- 事实上，python已经在这方面实现改进
+
+使用关键字**nonlocal**在内部函数声明，就可以指向外部函数的变量x，并且实现修改
+
+![](https://s4.ax1x.com/2022/01/19/7DtRDx.png)
+
+------
+
+### lambda表达式
+
+![](https://s4.ax1x.com/2022/01/19/7DaGCD.png)
+
+在**冒号**前面是函数参数
+
+在**冒号**后边是函数的返回值
+
+- 调用：赋值给一个变量，变量加（）传入值
+
+![](https://s4.ax1x.com/2022/01/19/7Day8g.png)
+
+![](https://s4.ax1x.com/2022/01/19/7DajVx.png)
+
+#### 介绍两个内置函数
+
+##### filter()
+
+过滤器
+
+![](https://s4.ax1x.com/2022/01/19/7DdqfS.png)
+
+filter（过滤对象，被筛选对象）
+
+none表示假，需要转化为可迭代对象才能打印
+
+![](https://s4.ax1x.com/2022/01/19/7Dw31e.png)
+
+![](https://s4.ax1x.com/2022/01/19/7D0oPf.png)
+
+```python
+# 用lambda简化
+b=list(filter(lambda x:x%2,range(10)))
+```
+
+##### map()
+
+映射
+
+![](https://s4.ax1x.com/2022/01/19/7DBowR.png)
+
+把range（5）中的元素，按照lambda的式子要求重新运算成新的列表（这里转化为可迭代对象，列表）
+
+------
+
+### 递归
+
+类似c，c++
+
+![](https://s4.ax1x.com/2022/01/19/7DrSvF.png)
+
+斐波那契数列递归实现：（分治思想）
+
+![](https://s4.ax1x.com/2022/01/19/7D6J8x.png)
+
+汉诺塔
+
+![](https://s4.ax1x.com/2022/01/19/7DRmFJ.png)
+
+------
+
+### 字典
+
+是映射类型，类似字典上查询对应页码可以找到该查询对象
+
+![](https://s4.ax1x.com/2022/01/19/7DRs0S.png)
+
+#### 创建和访问字典
+
+字典是大括号，不是数据类型，是映射类型
+
+元素的定义`key：value`
+
+![](https://s4.ax1x.com/2022/01/19/7DWGj0.png)
+
+- 将元组转化为字典
+
+![](https://s4.ax1x.com/2022/01/19/7DWf4H.png)
+
+- 也可以通过之间指定创建字典
+
+![](https://s4.ax1x.com/2022/01/19/7Df7W9.png)
+
+**注意**:小甲鱼，苍井空不能加 " "
+
+- 重新给key赋值
+
+![](https://s4.ax1x.com/2022/01/19/7Dhdp9.png)
+
+
+
+#### 内置函数
+
+- fromkeys（），创建并且返回一个**新的字典**，s是key，第二个参数默认为none
+
+![](https://s4.ax1x.com/2022/01/19/7DhT78.png)
+
+- 例子
+
+![](https://s4.ax1x.com/2022/01/19/7D4Yut.png)
+
+##### 访问字典的方法
+
+###### keys()
+
+提取字典的键：key
+
+![](https://s4.ax1x.com/2022/01/19/7D5e2j.png)
+
+![](https://s4.ax1x.com/2022/01/19/7D5uMn.png)
+
+###### values()
+
+同keys（），提取字典的值
+
+###### items()
+
+同上，把所有项打印出来，形如：（key，values）
+
+![](https://s4.ax1x.com/2022/01/19/7D5UMR.png)
+
+###### get（）
+
+定义当字典内没有这个项的时候，如何打印
+
+![](https://s4.ax1x.com/2022/01/19/7D5czd.png)
+
+###### 利用成员资格操作符判断该项是否存在
+
+in
+
+not in
+
+**成员资格操作符，在序列中是用值判断，但是在字典中是用key判断**
+
+![](https://s4.ax1x.com/2022/01/19/7DI9W4.png)
+
+###### 清空.clean（）
+
+使用   `dict.clean()`
+
+
+
+###### 深拷贝浅拷贝
+
+copy是浅拷贝，赋值不是浅拷贝
+
+![](https://i.w3tt.com/2022/01/19/T1jzl.png)
+
+###### .updata()
+
+更新字典：b也是字典
+
+![](https://i.w3tt.com/2022/01/19/T12Pg.png)
 
 
 
