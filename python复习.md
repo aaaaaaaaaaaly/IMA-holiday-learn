@@ -1,6 +1,6 @@
 ## python复习
 
-### 操作符
+## 操作符
 
 #### 算术操作符
 
@@ -36,7 +36,7 @@ not：一元操作符
 
 ------
 
-### 分支与循环
+## 分支与循环
 
 分支：if-else语句；if-elif-else语句；
 
@@ -74,7 +74,9 @@ y if x else z
 
 ------
 
-### 列表（list）
+## 基础
+
+### 列表（list）[]
 
 （数组）
 
@@ -189,7 +191,7 @@ member[:]
 
 ------
 
-### 元组（tuple）
+### 元组（tuple）(,)
 
 （带上枷锁的列表）
 
@@ -241,7 +243,7 @@ in，not in：成员操作符
 
 ------
 
-### 字符串（str）
+### 字符串（str）" "
 
 字符串不能随意修改，修改方法和元组一样
 
@@ -635,7 +637,7 @@ b=list(filter(lambda x:x%2,range(10)))
 
 ------
 
-### 字典
+### 字典(dict) { }
 
 是映射类型，类似字典上查询对应页码可以找到该查询对象
 
@@ -715,8 +717,6 @@ not in
 
 使用   `dict.clean()`
 
-
-
 ###### 深拷贝浅拷贝
 
 copy是浅拷贝，赋值不是浅拷贝
@@ -729,39 +729,479 @@ copy是浅拷贝，赋值不是浅拷贝
 
 ![](https://i.w3tt.com/2022/01/19/T12Pg.png)
 
+------
+
+### 集合（set）
+
+集合内数字唯一，会自动把重复的数字剔除；集合无序，所以不能通过`index`来找元素
+
+- 创建结合
+
+  直接用花括号
+
+  利用`set（）`实现转化
+
+```python
+set1=set（list）
+#可以把列表转化为集合
+
+num1={1,2,3,4,1，2}
+num1
+>>>{1,2,3,4}
+```
+
+#### 集合元素的增加和删除
+
+##### .add()
+
+##### .remove()
+
+#### 定义不可变集合
+
+`rozenset()`,创建即可无法添加或者删除
+
+
+
+------
+
+## 文件
+
+![](https://s4.ax1x.com/2022/01/20/76p0Lq.png)
+
+![](https://s4.ax1x.com/2022/01/20/76pfyR.png)
+
+- 使用完文件应及时关闭
+
+```python
+# 把文件转化为列表
+list(f)
+#迭代读取
+lines=list(f)# 转化为列表
+for each_line in lines:
+    print(each_line)
+#或者
+for each_line in f:# 效果一致
+    print(each_line)
+```
+
+- 示例
+
+![](https://s4.ax1x.com/2022/01/20/769ynI.png)
+
+- 以‘w',即写入的方式打开文件，覆盖
+
+
+
+### 实际操作
+
+#### 字符串操作方法
+
+![](https://s4.ax1x.com/2022/01/20/76PQy9.png)
+
+- split默认以空格划分
+
+![](https://s4.ax1x.com/2022/01/20/76i8Xj.png)
+
+- 目标：将文件内的说话内容分开为对话者文件，记录分别说的话
+- 先把内容分别放到两个list，使用到`split`,使用方法append(),实现记录
+- 文件名字记录，创建文件（以’w'打开），以`.writelines`将列表的内容写入
+- 及时关闭文件
+
+**优化，封装实现功能分割，更条理**
+
+![](https://s4.ax1x.com/2022/01/20/76FaqA.png)
+
+------
+
+### 文件系统
+
+#### 模块
+
+![](https://s4.ax1x.com/2022/01/20/76F2rj.png)
+
+- 需要的时候查文档
+
+![](https://s4.ax1x.com/2022/01/20/76kdlF.png)
+
+- 模块 `pickle `可以实现对象持久化储存
+- 通过文件保存，相关查文档
+
+```python
+pickle_file=open('city_data.pkl','wb')
+# 以文本的形式打开，覆盖写入
+piickle.dump(city,pickle_file)
+#pickle.dump(obj, file[, protocol])
+
+#序列化对象，并将结果数据流写入到文件对象中。
+#参数protocol是序列化模式，默认值为0，表示以文本的形式序列化。#protocol的值还可以是1或2，表示以二进制的形式序列化。
+pickle.close()
+pickle_file.close()
+```
+
+- load()方法
+
+```
+pickle.load(file)
+　　反序列化对象。将文件中的数据解析为一个Python对象。
+```
+
+------
+
+### 异常处理
+
+- ***（小甲鱼：33，34集）**
+
+![](https://s4.ax1x.com/2022/01/20/76VGTA.png)
+
+**try语句**
+
+```
+try：
+except：
+else：
+finally:
+  f.closse()
+```
+
+1、使用try/except/else结构，try中存放**需要运行的代码**；
+
+2、except 中**存放处理异常的代码**；
+
+3、else里存放try语句**未发生异常时执行的代码**。
+
+```
+try:
+finally:
+```
+
+python总会执行finally子句，无论try子句执行时是否发一异常。
+1、如果没有发生异常，python运行try子句，然后是finally子句，然后继续。
+2、如果在try子句发生了异常，python就会回来执行finally子句，然后把异常递交给上层try，控制流不会通过整个try语句。
+
+
+
+**with语句**
+
+with 语句适用于对资源进行访问的场合，确保**不管使用过程中是否发生异常都会执行必要的“清理”操作**，释放资源
+
+比如文件使用后**自动**关闭／线程中锁的自动获取和释放等。
+
+- 容易出现问题的代码（如果文件不存在会报错）
+
+```
+try:
+    f = open('xxx')
+except:
+    print('fail to open')
+    exit(-1)
+try:
+    do something
+except:
+    do something
+finally:
+    f.close()
+```
+
+- 有with语句的代码
+
+减少冗长，还能自动处理上下文环境产生的异常
+
+```
+try：
+with open("１.txt") as f:
+except:
+    print('fail to open')
+    exit(-1)
+try:
+    do something
+except:
+    do something
+```
+
+------
+
+## 界面入门
+
+**easygui**（模块）
+
+- 文档学习啊啊啊
+
+界面学习势在必行（easyx or qt）🦍🦍
+
+![img](../../AppData/Local/Temp/SGPicFaceTpBq/21864/125D4C97.jpg)
+
+------
+
+## 类和对象
+
+### 基础
+
+**对象=属性+方法**
+
+**属性：**变量
+
+**方法：**函数
+
+**类名要以大写字母开头**
+
+- 和c++类和对象的创建和调用相似
+
+![](https://s4.ax1x.com/2022/01/20/76QGGj.png)
+
+- 封装，基础，多态
+
+**继承可以继承方法**
+
+![](https://s4.ax1x.com/2022/01/20/76Qqyt.png)
+
+这里，list的方法被继承，所以类Mylist的对象可以使用append和sort
+
+方法
+
+**pass是占位符**
+
+
+
+**多态**
+
+![](https://s4.ax1x.com/2022/01/20/76lYkD.png)
+
+就是同名函数的多种实现
+
+
+
+### 面向对象编程
+
+**ooa：面向对象分析**
+
+**oop：面向对象编程**
+
+**ood：面向对象设计**
+
+**self相当于c++的this指针**，实现**指向**自身变量
+
+![](https://s4.ax1x.com/2022/01/20/76szAe.png)
+
+#### ___init__-(self)方法
+
+（类似，c++中的构造函数，同名重写方法，创建对象的时候会被调用一次）
+
+ 定义了 `__init__()` 方法后，类的**实例化操作会自动调用该方法**
+
+![](https://s4.ax1x.com/2022/01/20/76yIDf.png)
+
+#### 公有和私有
+
+name mangling:名字重造
+
+在python中定义私有变量只需要在变量名或者函数名前加上**"__"**,两个下划线，那么这个函数或者变量就**会变为私有**
+
+但是其实可以通过`_类名__成员变量`找到这个私有类
+
+![](https://s4.ax1x.com/2022/01/20/76gicR.png)
+
+#### 继承
+
+![](https://s4.ax1x.com/2022/01/20/76Rpl9.png)
+
+**继承是通过 class 类名 （父类名）**
+
+python中没有继承的关键字
+
+**多重继承**
+
+语法`class 类名 (父类1，父类2)·
+
+
+
+#### **random（）函数**
+
+**random()** 方法返回随机生成的一个实数，它在[0,1)范围内。
+
+以下是 random() 方法的语法:
+
+```
+import random
+
+random.random()
+```
+
+**注意：**random()是不能直接访问的，需要**导入 random 模块，然后通过 random 静态对象调用该方法。**
+
+
+
+#### 示例
+
+子类重写父类的方法或者实例化，就会把父类相应的方法或者实例化覆盖掉
+
+![](https://s4.ax1x.com/2022/01/20/76Wlv9.png) 
+
+这里shark（）init重写（实例化对象的时候自动调用）
+
+导致shark类中没有成员x，y，因为父类的实例化被覆盖
+
+##### 解决问题
+
+- 第一种方法
+
+![](https://s4.ax1x.com/2022/01/20/76Wf2Q.png)
+
+只需要在重写实例化的时候，首先对父类的示例话继承
+
+语法:`父类名.-init-(self)`
+
+- 第二种方法
+
+使用`super()`函数
+
+语法：`super().-init-()`
+
+![](https://s4.ax1x.com/2022/01/20/76fmqI.png)
+
+
+
+------
+
+#### 组合
+
+![](https://s4.ax1x.com/2022/01/20/76hFwq.png)
+
+**组合就是把类的实例化放到一个新类里面，不需要继承**
 
 
 
 
 
+## 类，类对象和实例对象
+
+![](https://s4.ax1x.com/2022/01/20/764sbR.png)
+
+![](https://s4.ax1x.com/2022/01/20/7647VI.png)
+
+- 先把c的count赋值，这个时候会多出一个实例属性并且**把原来那个类属性覆盖**
 
 
 
+**属性和方法的名字相同，属性会把方法的名字覆盖掉**
+
+![](https://s4.ax1x.com/2022/01/20/765sSS.png)
+
+- python是不需要声明对象，那么
+- `c.x=1`表示初始化一个变量，属于c，就是c的成员
+- 这个时候会把同名的`x()`方法覆盖
 
 
 
+### 绑定
+
+python严格要求方法需要有实例才能被调用，这种限制其实就是python所谓的绑定概念
+
+**self**
+
+![](https://s4.ax1x.com/2022/01/20/76op40.png)
+
+### 一些BIF（build in Functions）
+
+#### issubclass（class，classinfo）
+
+如果class是classinfo的子类，就返回True
+
+classinfo可以是类对象组成的元组，只要class是其中任何一个候选类的子类，就会返回True
 
 
 
+#### isinstance（object，classinfo）
+
+检查object是否为类的实例对象
+
+如果第一个参数不是对象，会永远返回False；
+
+如果第二个参数不是元组或者类，会抛出一个typerror的异常
 
 
 
+#### hasattr（object，name）
+
+测试对象是否有属性，name是属性名，object是对象
 
 
 
+#### gettattr（object，name[,defaulf]
+
+返回对象指定的属性值
 
 
 
+#### setattr(object,name,value)
+
+设置指定对象的属性
 
 
 
+#### delattr(object,name)
+
+删除指定对象的属性
 
 
 
+#### property（fget=None，fset=None，fdel=None,doc=None)
+
+通过属性设置属性
 
 
 
+**等等需要的时候查文档**
+
+------
+
+## 方法
+
+### 构造和析构
+
+![](https://s4.ax1x.com/2022/01/20/76jxQ1.png)
 
 
 
+### -new-（cls[,...])
 
+![](https://s4.ax1x.com/2022/01/20/76xHC4.png)
+
+字符串str是不可以被改变的类型，将传入的字符串改为大写，可以调用new方法，在new方法里面调用upper（）方法，获得新的字符串，返回时，调用new方法把刚才新的string返回
+
+
+
+### -del-（self）
+
+python 的垃圾回收机制
+
+**示例**
+
+![](https://s4.ax1x.com/2022/01/20/7c9RiT.png)
+
+del掉标签不会调用del，只有对象被del掉才行
+
+类似c++的析构
+
+### 算术运算
+
+**工厂函数就是类对象**
+
+![](https://s4.ax1x.com/2022/01/20/7cPwuj.png)
+
+**类似c++重载**
+
+![](https://s4.ax1x.com/2022/01/20/7cPRv4.png)
+
+其中self指自身，other表示和self实现运算的另一个变量
+
+**示例**
+
+![](https://s4.ax1x.com/2022/01/20/7ciOYV.png)
+
+**解决**
+
+![](https://s4.ax1x.com/2022/01/20/7cF9m9.png)
+
+
+
+（等等，运算符重载）
