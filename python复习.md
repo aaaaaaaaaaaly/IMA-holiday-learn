@@ -1154,7 +1154,7 @@ classinfo可以是类对象组成的元组，只要class是其中任何一个候
 
 ------
 
-## 方法
+## 魔法方法
 
 ### 构造和析构
 
@@ -1205,3 +1205,84 @@ del掉标签不会调用del，只有对象被del掉才行
 
 
 （等等，运算符重载）
+
+**反运算：a+b，当a无法实现，就会让b实现**
+
+![](https://s4.ax1x.com/2022/01/20/7gK9ln.png)
+
+**示例**：
+
+![](https://s4.ax1x.com/2022/01/20/7gKWXq.png)
+
+这里1没办法调用，就会启动b的反运算
+
+**还有很多其他方法magically**
+
+![](https://s4.ax1x.com/2022/01/20/7gMu4g.png)
+
+------
+
+
+
+## 简单定制
+
+**要求**
+
+![](https://s4.ax1x.com/2022/01/20/7gMgUO.png)
+
+**需要的知识**
+
+![](https://s4.ax1x.com/2022/01/20/7gQAG4.png)
+
+**time.localtime([secs])**
+
+接收时间戳，返回当地当下时间**元组t**
+
+![](https://s4.ax1x.com/2022/01/20/7gQwo8.png)
+
+**代码实现**
+
+```python
+import time as t
+class Mytimer():
+    def _init_ (self):
+        self.prompt="计时未开始"
+        self.lasted=[]
+        # self.start=0注意不要和方法名字重复，否则变量会覆盖方法
+        self.begin=0
+        self.end=0
+    def _str_ (self):
+        #当使用print输出对象的时候，只要自己定义了__str__(self)方         法，那么就会打印从在这个方法中return的数据
+        return self.prompt
+    _repr_=_str_
+    #重写repr，str让对象创建后调用可以直接显示结果
+    #开始计时
+    def start(self):
+        self.begin=t.localtime()
+        print("开始计时")
+    #停止计时
+    def stop(self):
+        if not self.begin:
+            print("调用start开始计时")
+        else:
+            
+          self.end=t.localtime()
+          self._clas()#调用方法
+           print("计时结束")
+    #内部方法，计算运行时间
+    def _clas(self):
+        self.lasted=[]
+        self.prompt="总共运行了:"
+        for index in range(6):
+            self.lasted.append(self.stop[index]-self.start[index])
+            self.prompt+=str(self.lasted[index])
+       # print(self.prompt)
+    #为下一轮做准备
+        self.begin=0
+        self.end=0
+```
+
+
+
+ **def _str_ (self)**:
+       ** 当使用print输出对象的时候，只要自己定义了__str__(self)方         法，那么就会打印从在这个方法中return的数据 **
