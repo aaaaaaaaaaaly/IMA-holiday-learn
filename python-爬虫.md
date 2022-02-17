@@ -1,4 +1,4 @@
-## python复习
+# python复习
 
 ## 操作符
 
@@ -32,7 +32,7 @@ not：一元操作符
 
 **注意**：当幂运算左侧是一元运算符的时候，优先级逼幂运算高；当右侧是一元运算符的时候，优先级比他低
 
-​             not>and>or
+             not>and>or
 
 ------
 
@@ -928,7 +928,7 @@ except:
 
 界面学习势在必行（easyx or qt）🦍🦍
 
-![img](../../AppData/Local/Temp/SGPicFaceTpBq/21864/125D4C97.jpg)
+![img](C:/AppData/Local/Temp/SGPicFaceTpBq/21864/125D4C97.jpg)
 
 ------
 
@@ -1286,3 +1286,877 @@ class Mytimer():
 
  **def _str_ (self)**:
        ** 当使用print输出对象的时候，只要自己定义了__str__(self)方         法，那么就会打印从在这个方法中return的数据 **
+
+
+
+
+
+# 爬虫
+
+## 基本篇
+
+**基本流程**
+
+- 连接到特定网址，抓取资料
+- 解析资料，取得想要的部分
+
+
+
+1. **Request**自动爬取页面提交请求
+2. **robots.txt**爬虫排除标准
+3. **Beautiful Soup**解析HTMl页面
+4. 利用**正则表达式**详解提取页面关键信息
+
+
+
+**抓取资料**
+
+尽可能让程序模仿一个普通使用者的使用情况
+
+- 如果是json模式的资料，用python内建的json模板来抓取即可
+- 但是大部分是HTML格式的资料：使用第三方套件 **Beautifulsuop**来解析
+
+
+
+
+
+## 基本代码
+
+```python
+# 抓取网页的原始码（HTMl）
+import urllib.request as req
+# 利用内置套件做网络的连线
+url="https://movie.douban.com/top250"
+# 建立一个Request物件，附加Request Headers的资讯
+request=req.Request(url,headers={
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.80 Safari/537.36 Edg/98.0.1108.50"
+})
+with req.urlopen(request) as response:
+    data=response.read().decode("utf-8")
+#print(data)
+import bs4#做解析
+root=bs4.BeautifulSoup(data,"html.parser")
+#会用html.parser帮我们做解析
+#比如要获取网页的标题，用root代表整份网页，title是一个网页的标签
+print(root.title.string)#.string表示抓到标签title里面的文字,就抓到网页的标题
+"""
+抓取文章的标题,需要观察源码文章标题的共同点:
+<div class=''>
+</div>
+就是共同点
+"""
+titles=root.find_all("span",class_="title")
+"""
+""内是要找寻的标签名称，class_="title"是筛选的条件
+.find_all就是找到所有符合条件的标签
+会返回列表
+"""
+for title in titles:
+    print(title)
+"""
+这样只会提取文字，不会附加<span>等代码
+ titles表示span
+.a代表符合条件的会被打印的title
+.string代表内容
+"""
+```
+
+
+
+
+
+## Requests库入门
+
+### 主要有7个方法
+
+#### requests.request()
+
+构造一个请求，支撑一下各方法的基础方法
+
+
+
+#### requests.get()
+
+获取HTML网页的主要方法，对应于HTTP的GET  ![](https://s4.ax1x.com/2022/02/15/HRkFPK.png)![](https://s4.ax1x.com/2022/02/15/HRFN4K.png)
+
+
+
+- Response对象的属性：
+
+![](https://s4.ax1x.com/2022/02/15/HRk8xg.png)
+
+其中：
+
+`encoding`和`apparent_encoding`有内层区别
+
+![](https://s4.ax1x.com/2022/02/15/HRAies.png)
+
+#### requests.head()
+
+获取HTML网页头信息的方法，对应于HTTP的HEAD
+
+![](https://s4.ax1x.com/2022/02/15/HRJYV0.png)
+
+#### requests.post()
+
+想HTML网页提交POST请求的方法，对应于HTTP的POST
+
+![](https://s4.ax1x.com/2022/02/15/HRJaPU.png)
+
+#### requests.put()
+
+向HTML网页提交PUT请求的方法，对应于HTTP的PUt
+
+![](https://s4.ax1x.com/2022/02/15/HRYOTx.png)
+
+#### requests.patch()
+
+向HTML网页提交局部修改请求，对应于HTTP的PATCH
+
+#### requests.delete()
+
+向HTML的网页提交删除请求，对应于HTTP的DELETE
+
+### 爬取网页的通用代码框架
+
+理解代码框架： **异常需要重视**
+
+#### 了解HTTP协议
+
+![](https://s4.ax1x.com/2022/02/15/HREM38.png)
+
+
+
+HTTP协议**有相应的方法：**
+
+![](https://s4.ax1x.com/2022/02/15/HRZnl8.png)
+
+- 其中，了解put和post的区别：
+
+![](https://s4.ax1x.com/2022/02/15/HRQlvt.png)
+
+
+
+HTTP协议的方法与Requests库**对应**
+
+![](https://s4.ax1x.com/2022/02/15/HRQlvt.png)
+
+
+
+#### 了解Requests库的异常
+
+![](https://s4.ax1x.com/2022/02/15/HRlvY4.png)
+
+有一个函数方法：
+
+**r.raise_for_status()**
+
+![](https://s4.ax1x.com/2022/02/15/HR1QnP.png)
+
+
+
+#### 爬取网页的代码框架
+
+![](https://s4.ax1x.com/2022/02/15/HR1aXq.png)
+
+```python
+import requests
+def getHTMLTXT(url):
+    try:
+        r=requests.get(url,timeout=30)
+        r.raise_for=status()
+        r.encoding=r.qppqrent_encoding
+        return r.text
+    expect:
+        return"异常处理"
+if__name__=="__main__":
+    url="heep://"
+    print(getHTMLTXT(url))
+```
+
+**r.raise_for_status()**
+
+表示：如果转台不是200，引发HTTPError异常
+
+
+
+### 对**kwargs参数的理解
+
+分为两种情况：
+
+- **requests.request(method,url,kwargs) **
+
+**kwargs，有13个参数**
+
+![](https://s4.ax1x.com/2022/02/15/HRG96s.png)
+
+**method，包含Requests的7种方法**
+
+![](https://s4.ax1x.com/2022/02/15/HRGzE6.png)
+
+- **requests.method(url,kwargs)**
+
+
+
+#### params
+
+![](https://s4.ax1x.com/2022/02/15/HRtb8S.png)
+
+
+
+#### data
+
+
+
+#### json
+
+![](https://s4.ax1x.com/2022/02/15/HRNmUx.png)
+
+
+
+#### headers
+
+![](https://s4.ax1x.com/2022/02/15/HRNfRU.png)
+
+可以更换选择浏览器
+
+
+
+#### cookies
+
+![](https://s4.ax1x.com/2022/02/15/HRNjzD.png)
+
+
+
+#### auth
+
+
+
+#### files
+
+![](https://s4.ax1x.com/2022/02/15/HRUeyQ.png)
+
+
+
+#### timeout
+
+![](https://s4.ax1x.com/2022/02/15/HRaKje.png)
+
+
+
+#### proxies
+
+![](https://s4.ax1x.com/2022/02/15/HRaN38.png)
+
+
+
+#### allow_redirects
+
+#### stream
+
+#### verify
+
+#### cert
+
+![](https://s4.ax1x.com/2022/02/15/HRa0Bj.png)
+
+
+
+
+
+### 单元小结
+
+最常用的，requests.get(),request.head()
+
+![](https://s4.ax1x.com/2022/02/15/HRwdTs.png)
+
+最基本的代码框架
+
+![](https://s4.ax1x.com/2022/02/15/HRwcXF.png)
+
+
+
+
+
+# 网络爬虫引发的问题
+
+![](https://s4.ax1x.com/2022/02/16/HfQdxA.png)
+
+## Robots协议
+
+作用：告诉网络爬虫哪些可以抓取，哪些是不允许的
+
+![](https://s4.ax1x.com/2022/02/16/HflOk8.png)
+
+## Robots协议的遵守方式
+
+网络爬虫：自动或人工识别Robots协议，再进行内容爬取
+
+约束性：Robots协议是建议当时非约束性，网络爬虫可以不遵守，但是存在法律风险
+
+![](https://s4.ax1x.com/2022/02/16/Hf8PiT.png)
+
+
+
+# 实战
+
+## 京东商品页面
+
+```python
+import requests
+url="https://item.jd.com/2967929.html"
+try:
+    r=requests.get(url)
+    r.raise_for_status()
+    r.encoding=r.apparent_encoding
+    print(r.text[:1000])
+except:
+    print("爬取失败")    
+```
+
+
+
+## 亚马逊商品页面
+
+```python
+import requests
+"""
+r.request.headers，查找头部发现显示为python
+所以需要用到headers字段改头部信息
+"""
+url="https://www.amazon.cn/gp/product/B01M8L5Z3Y"
+try:
+    kv={'user-agent':'Mozilla/5.0'}#定义新的头部键值对
+    r=requests.get(url,headers=kv)#使用headers字段
+    r.raise_for_status()
+    r.encoding=r.apparent_encoding
+    print(r.text[1000:2000])
+except:
+    print("爬取失败")
+```
+
+
+
+## 百度/360搜索关键字提交
+
+**搜索引擎关键字提交有接口：**
+
+比如，百度关键词接口：https://www.baidu.com/s?wd=keyword
+
+​            360关键词接口：https:///www.so.com?q=keyword
+
+- 我们可以修改连接keyword部分，就可以提交关键词
+
+
+
+百度搜索全代码
+
+```python
+import requests
+url="https://www.daidu.com/s"
+keyword="python"
+try:
+    kv={'wd':keyword}
+    r=requests.get(url,params=kv)
+    print(r.request.url)
+    r.raise_for_status()
+    print(len(r.text))
+except:
+    print("爬取失败")
+```
+
+360搜索全代码
+
+```python
+import requests
+url="https://www.so.com/s"
+keyword="python"
+try:
+    kv={'q':keyword}
+    r=requests.get(url,params=kv)
+    print(r.request.url)
+    r.raise_for_status()
+    print(len(r.text))
+except:
+    print("爬取失败")
+```
+
+
+
+
+
+## 网络图片的爬取和存储
+
+![](https://s4.ax1x.com/2022/02/16/HfvcWQ.png)
+
+```python
+import requests
+path="D:/abc.jpg"
+url="  "#填入该照片的web地址
+r=requests.get(url)
+print(r.status_code)
+with open(path,'wb')as f:
+    f.write(r.content)
+    #f.write(r.content)把文件返回二进制形式
+f.close()#把文件关闭
+```
+
+
+
+**网络爬取的全代码**
+
+```python
+import requests
+import os
+url=" "#要爬取的图片web地址
+root="D://pics//"#本地存储爬取的图片的根目录
+path=root+url.split('/')[-1]
+#取url最后一个/后的部分,就是图片的名字
+try:
+    if not os.path.exists(root):
+        os.mkdir(root)
+    if not os.path.exists(path):
+        r=requests.get(url)
+        with open(path,'wb') as f:
+            f.write(r.content)
+            f.close()
+            print("文件保存成功")
+    else:
+        print("文件已经存在")
+except:
+    print("爬取失败")
+```
+
+
+
+## IP地址归属地自动查询
+
+iP138的网站提供这样的功能：查询ip地址
+
+iP138网站的网址：http://m.ip138.com/ip.asp?ip=ipaddress
+
+可以看出网页链接的特征，会在id后面显示地址，我们考科一通过url接口爬取地址信息
+
+```python
+import requests
+url="http://m.ip138.com/ip.asp?ip=ipaddress"
+#ip=ipaddress就是ip地址
+#我们用requests的方法提交一个ip地址
+url="http://m.ip138.com/ip.asp?ip"
+r=requests.get(url+'202.204.80.112')
+#检测一下状态码
+print(r.status_code)
+#查看返回文本的相关内容
+print(r.text[-500:])
+```
+
+
+
+- ip地址查询的全代码
+
+```python
+import requests
+url="http://m.ip138.com/ip.asp?ip"
+try:
+    r=requests.get(url+'202.204.80.112')
+    r.raise_for_status()
+    r.encoding=r.apparent_encoding
+    print(r.text[-500:])
+except:
+    print("爬取失败")
+```
+
+
+
+
+
+# **Beautiful Soup**
+
+## 库的基本元素
+
+**Beaytiful Soup**能够解析HTML网页
+
+![](https://s4.ax1x.com/2022/02/16/Hhd6Nd.png)
+
+- 对标签树的理解
+
+![](https://s4.ax1x.com/2022/02/16/Hhw9UJ.png)
+
+- 库的引用
+
+![](https://s4.ax1x.com/2022/02/16/Hhwl8I.png)
+
+- Beautiful Soup和HTML对应，能解析HTML
+
+![](https://s4.ax1x.com/2022/02/16/Hhw2a4.png)
+
+- Beautiful Soup库解析器
+
+![](https://s4.ax1x.com/2022/02/16/Hh08Y9.png)
+
+
+
+## bs4的基本使用代码
+
+```python
+from bs4 import BeautifulSoup
+soup=BeautifulSoup('<p>data</p>','html.parser')
+```
+
+- 比如例子
+
+```python
+import requests
+url="http://python123.io/ws/demo.html"
+r=requests.get(url)
+demo=r.text
+from bs4 import BeautifulSoup
+soup=BeautifulSoup(demo,"html.parser")
+print(soup.prettify())
+```
+
+
+
+## 获得tag元素的相关方法
+
+```python
+import requests
+url="http://python123.io/ws/demo.html"
+r=requests.get(url)
+demo=r.text
+from bs4 import BeautifulSoup
+soup=BeautifulSoup(demo,"html.parser")
+#print(soup.prettify())
+# print(soup.title)
+```
+
+- 获取链接标签内容，用.a
+
+```python
+##获得a标签的名字
+print(soup.a.name)
+```
+
+- 获取p标签内容，用.p
+
+```python
+#获得p标签的名字
+print(soup.p.name)
+```
+
+- 查询父标签的信息，比如名字
+
+```python
+#获得a父标签的名字
+tag=soup.a
+print(tag.parent.name)
+#查看a父标签的父标签是谁
+print(tag.parent.parent.name)
+```
+
+- 用attrs来获取标签属性
+
+```python
+#用.attrs来获取标签属性
+print(tag.attrs)
+#由于它是一个字典，我们可以利用字典对每一个属性实现提取
+#比如我们希望获得class属性的值
+print(tag.attrs['class'])
+print(tag.attrs['href'])
+```
+
+- 获取标签间的string内容
+
+```python
+#获取string内容
+#获得a标签的内容
+print(soup.a.string)
+#获取p标签的内容
+print(soup.p.string)
+```
+
+- 新的“汤”
+
+```python
+newsoup=BeautifulSoup("<b><!--This is a comment--></b><p>This is not a comment</p>","html.parser")
+print(newsoup.b.string)
+print(type(newsoup.b.string))
+print(newsoup.p.string)
+print(type(newsoup.p.string))
+```
+
+
+
+## 基于bs4库的HTML的内容遍历方法
+
+### html的标签树
+
+![](https://s4.ax1x.com/2022/02/16/Hhhxr4.png)
+
+#### 下行遍历
+
+![](https://s4.ax1x.com/2022/02/16/HhIMgf.png)
+
+- contens举例
+
+![](https://s4.ax1x.com/2022/02/16/HhoZsU.png)
+
+- 使用遍历来抓取子孙节点的内容
+
+![](https://s4.ax1x.com/2022/02/16/Hho1Rx.png)
+
+
+
+#### 上行遍历
+
+![](https://s4.ax1x.com/2022/02/16/Hhoaod.png)
+
+- 上行遍历的代码，注意需要判断是否有父标签
+
+![](https://s4.ax1x.com/2022/02/16/HhTPmD.png)
+
+
+
+#### 平行遍历
+
+![](https://s4.ax1x.com/2022/02/16/HhT3kj.png)
+
+**标签的平行遍历是有条件的，所有的平行遍历必须，发生在同一个父节点下**
+
+![](https://s4.ax1x.com/2022/02/16/HhTwBF.png)
+
+- 举例
+
+![](https://s4.ax1x.com/2022/02/16/HhT5AH.png)
+
+- 平行遍历的代码
+
+![](https://s4.ax1x.com/2022/02/16/HhTo4A.png)
+
+
+
+### 总结
+
+![](https://s4.ax1x.com/2022/02/16/Hh7ivV.png)
+
+
+
+## 如何让HTML页面更友好的显示
+
+**用prettify()打印**
+
+![](https://s4.ax1x.com/2022/02/16/Hh7Qv6.png)
+
+让标签层级关系体现
+
+
+
+## 单元小结
+
+bs4库提供的5种基本元素：
+
+1. 标签：Tag
+2. 标签的名字：Name
+3. 标签的属性：Attributes
+4. 标签之间的字符串：NavigableString
+5. 标签内注释的字符串：Comment
+
+bs4的遍历功能：
+
+1. 下行遍历
+
+- contents
+- children
+- descendants
+
+  2.上行遍历
+
+- parent
+- parents
+
+  3.平行遍历
+
+- next_sibling
+- previous_sibling
+- next_siblings
+- previous_siblings
+
+
+
+# 信息标记的三种形式
+
+信息的标记
+
+![](https://s4.ax1x.com/2022/02/17/H5PLCt.png)
+
+HTML简称超文本标记语言
+
+![](https://s4.ax1x.com/2022/02/17/H5iCUs.png)
+
+
+
+国际公认的信息标记有3种形式：XML，JSON，YAML
+
+
+
+## XML的格式
+
+和html相关的格式非常接近
+
+![](https://s4.ax1x.com/2022/02/17/H5Fb1P.png)
+
+空元素的时候可以实现缩写
+
+![](https://s4.ax1x.com/2022/02/17/H5kHUJ.png)
+
+
+
+## Json的格式
+
+对信息的定义叫key，对信息的赋值叫value，都要用“”来括，如果是数字就不需要
+
+![](https://s4.ax1x.com/2022/02/17/H5AJMV.png)
+
+如果一个key对应多个value，用方括号【】括起来
+
+![](https://s4.ax1x.com/2022/02/17/H5AdIJ.png)
+
+键值对可以嵌套使用，此时采用大括号：
+
+![](https://s4.ax1x.com/2022/02/17/H5ABGR.png)
+
+
+
+## YAMl的格式
+
+也采用键值对，但是是无类型，没有双引号
+
+![](https://s4.ax1x.com/2022/02/17/H5AHL8.png)
+
+通过缩进的方式表达所属关系：
+
+![](https://s4.ax1x.com/2022/02/17/H5AxWn.png)
+
+用“-”表达并列关系：
+
+![](https://s4.ax1x.com/2022/02/17/H5E9yV.png)
+
+用|表示整块数据，#表示注释：
+
+![](https://s4.ax1x.com/2022/02/17/H5EEFJ.png)
+
+总的来说：
+
+![](https://s4.ax1x.com/2022/02/17/H5EVY9.png)
+
+
+
+# 三种信息标记形式的比较
+
+- ## xml是一种用尖括号，标签表达信息的标签形式
+
+最早的通用信息标记语言，可扩张性好，但是繁琐，网络上的信息交互和传递
+
+![](https://s4.ax1x.com/2022/02/17/H5Eglq.png)
+
+举例：
+
+![](https://s4.ax1x.com/2022/02/17/H5Qstf.png)
+
+
+
+
+
+
+
+- ## json是一种用有类型的键值对标机信息的标签形式
+
+信息有类型，适合程序处理（js），较简洁
+
+移动应用云端和节点的信息通信，无注释
+
+![](https://s4.ax1x.com/2022/02/17/H5QJfO.png)
+
+举例：
+
+![](https://s4.ax1x.com/2022/02/17/H5Qg1g.png)
+
+
+
+
+
+
+
+
+
+- ## yaml是一种用无类型的键值对表达信息的标签形式
+
+信息无类别，文本信息比较高，可读性好
+
+各类系统的配置文件，有注释易读
+
+![](https://s4.ax1x.com/2022/02/17/H5QtpD.png)
+
+举例：
+
+![](https://s4.ax1x.com/2022/02/17/H5QIA0.png)
+
+
+
+
+
+# 信息提取的一般方法
+
+**方法1**：完整解析信息的标机形式，再提取关键信息
+
+XML，JSON，YAML
+
+需要标机解析器
+
+例如bs4库 的标签数遍历
+
+优点：信息解析准确
+
+缺点：提取过程繁琐，速度慢
+
+
+
+**方法2**：无视标记形式，直接搜索关键信息
+
+搜索：
+
+对信息的文本查找函数即可
+
+优点：提取过程简洁，速度比较快
+
+缺点：提取结果准确性与信息内容相关
+
+
+
+**融合方法**：结合形式解析与搜索方法，提取关键信息
+
+XML，JSON，YAML搜索
+
+需要标记解析器及文本查找函数
+
+
+
+**实例：**提取HTML中所有url链接
+
+思路：1）搜索到所有<a>标签
+
+​            2）解析<a>标签格式，提取href后链接的内容
+
+
+
+```python
+from bs4 import BeautifulSoup
+soup=BeautifulSoup(demo,"html.parser")
+for link in soup.find_all('a'):
+    print(link.get('href'))
+```
+
+
+
+# 基于bs4库的HTML内容查找方法
+
